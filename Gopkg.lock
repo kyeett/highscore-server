@@ -13,18 +13,6 @@
   version = "v4.0.2"
 
 [[projects]]
-  digest = "1:1f414d8c9e2c707c5fa87a59ce3446e792c3cd297e45a05c5a3acbd74148d05b"
-  name = "github.com/golang-migrate/migrate"
-  packages = [
-    ".",
-    "database",
-    "source",
-  ]
-  pruneopts = "T"
-  revision = "4937cd088f7c7193ee59b319c1c2caa7482aae8e"
-  version = "v3.5.4"
-
-[[projects]]
   digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
   name = "github.com/google/uuid"
   packages = ["."]
@@ -38,7 +26,6 @@
   input-imports = [
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
-    "github.com/golang-migrate/migrate",
     "github.com/google/uuid",
   ]
   solver-name = "gps-cdcl"

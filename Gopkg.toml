@@ -29,8 +29,9 @@
   go-version = "go1.12"
   install = [
       "./cmd/...",
-      "github.com/golang-migrate/migrate"
   ]
+  ensure = "false"
+  additional-tools = ["github.com/golang-migrate/migrate"]
 
 
 [[constraint]]
@@ -45,11 +46,16 @@
   go-tests = true
   unused-packages = true
 
-[[override]]
-  name = "github.com/golang-migrate/migrate"
-  version = "3.5.4"
 
- # Required because `migrate-db` is needed but not detected by dep.
-[[prune.project]]
-    name = "github.com/golang-migrate/migrate"
-    unused-packages = false
+# [[constraint]]
+#   name = "github.com/golang-migrate/migrate"
+#   version = "3.5.4"
+
+# [[override]]
+#   name = "github.com/golang-migrate/migrate"
+#   version = "3.5.4"
+
+#  # Required because `migrate-db` is needed but not detected by dep.
+# [[prune.project]]
+#     name = "github.com/golang-migrate/migrate"
+#     unused-packages = false
