@@ -27,6 +27,11 @@
 [metadata.heroku]
   root-package = "github.com/kyeett/highscore-server"
   go-version = "go1.12"
+  install = [
+      "./cmd/...",
+      "github.com/golang-migrate/migrate"
+  ]
+
 
 [[constraint]]
   name = "github.com/go-chi/chi"
