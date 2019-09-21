@@ -1,0 +1,13 @@
+{
+  "name": "A simple highscore server",
+  "description": "Highscore Server",
+  "keywords": [
+    "getting-started",
+    "go",
+    "highscore",
+    "example",
+    "ebiten",
+    "game development"
+  ],
+  "repository": "http://github.com/kyeett/highscore-server"
+}
