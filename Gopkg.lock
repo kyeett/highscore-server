@@ -13,14 +13,14 @@
   version = "v4.0.2"
 
 [[projects]]
-  digest = "1:e5d10dd0f618f8391908cfc500811e1f4c40f12db00cc71f0aea508b83d8a862"
+  digest = "1:1f414d8c9e2c707c5fa87a59ce3446e792c3cd297e45a05c5a3acbd74148d05b"
   name = "github.com/golang-migrate/migrate"
   packages = [
     ".",
     "database",
     "source",
   ]
-  pruneopts = "UT"
+  pruneopts = "T"
   revision = "4937cd088f7c7193ee59b319c1c2caa7482aae8e"
   version = "v3.5.4"
 

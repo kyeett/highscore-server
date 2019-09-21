@@ -45,7 +45,7 @@
   go-tests = true
   unused-packages = true
 
-[[constraint]]
+[[override]]
   name = "github.com/golang-migrate/migrate"
   version = "3.5.4"
 
