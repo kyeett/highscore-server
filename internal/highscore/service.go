@@ -24,13 +24,11 @@ func (h *BasicService) Add(m *model.Score) error {
 	query := `
 	INSERT INTO score (
 		id,
-		created_at,
 		score,
 		game_name,
 		user_id
 	) VALUES (
 		:id,
-		:created_at,
 		:score,
 		:game_name,
 		:user_id
