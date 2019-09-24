@@ -1,49 +1,41 @@
 package service
 
-// func markAsHandled(w http.ResponseWriter, r *http.Request) {
-// 	var ids []int
-// 	if err := json.NewDecoder(r.Body).Decode(&ids); err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	updateHandled(ids, true)
-// }
+import (
+	"encoding/json"
+	"net/http"
+	"net/url"
 
-// func markAsUnhandled(w http.ResponseWriter, r *http.Request) {
-// 	var ids []int
-// 	if err := json.NewDecoder(r.Body).Decode(&ids); err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	updateHandled(ids, false)
-// }
+	"github.com/go-chi/chi"
+	"github.com/kyeett/highscore-server/model"
+)
 
-// func updateHandled(ids []int, newStatus bool) {
-// 	dbMutex.Lock()
-// 	defer dbMutex.Unlock()
+func (s *Service) addScore(w http.ResponseWriter, r *http.Request) {
+	var m model.Score
+	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	for i, order := range orderFailures {
-// 		for _, id := range ids {
-// 			if order.ID == id {
-// 				orderFailures[i].Handled = newStatus
-// 				fmt.Println("order updated", id)
-// 				break
-// 			}
-// 		}
-// 	}
-// }
+	if err := s.Highscore.Add(&m); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// var dbMutex sync.Mutex
+	w.WriteHeader(http.StatusCreated)
+}
 
-// func listOrderFailures(w http.ResponseWriter, r *http.Request) {
-// 	dbMutex.Lock()
-// 	defer dbMutex.Unlock()
+func (s *Service) listByGame(w http.ResponseWriter, r *http.Request) {
+	name, err := url.PathUnescape(chi.URLParam(r, "gameName"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	res, err := json.MarshalIndent(&orderFailures, "", "  ")
-// 	if err != nil {
-// 		http.Error(w, "something went wrong string", http.StatusInternalServerError)
-// 		return
-// 	}
+	list, err := s.Highscore.ListByGame(model.Game{Name: name})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	w.Write(res)
-// }
+	json.NewEncoder(w).Encode(&list)
+}

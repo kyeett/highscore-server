@@ -6,11 +6,13 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/jmoiron/sqlx"
+	"github.com/kyeett/highscore-server/internal/highscore"
 )
 
 type Service struct {
-	chi.Router
-	db ScoreDB
+	Router    chi.Router
+	Highscore highscore.Service
 }
 
 type orderFailure struct {
@@ -20,9 +22,11 @@ type orderFailure struct {
 	Handled   bool      `json:"handled"`
 }
 
-func New() *Service {
+func New(db *sqlx.DB) *Service {
 
-	// Create a new data base
+	s := &Service{
+		Highscore: highscore.NewBasic(db),
+	}
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -36,15 +40,13 @@ func New() *Service {
 	})
 
 	r.Mount("/static", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
 	r.Route("/highscore", func(r chi.Router) {
-		// r.Get("/", listOrderFailures)
-		// r.Post("/mark_as_handled", markAsHandled)
-		// r.Post("/mark_as_unhandled", markAsUnhandled)
+		r.Post("/", s.addScore)
+		r.Route("/{gameName}", func(r chi.Router) {
+			r.Get("/", s.listByGame)
+		})
 	})
 
-	return &Service{
-		Router: r,
-		db:     NewScoreDB(),
-	}
+	s.Router = r
+	return s
 }
