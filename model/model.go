@@ -1,14 +1,16 @@
 package model
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
 // Score model
 type Score struct {
-	ID uuid.UUID `db:"id" json:"id"`
-	// CreatedAt time.Time `db:"created_at" json:"created_at"`
-	Score float64 `db:"score" json:"score"`
+	ID        uuid.UUID `db:"id" json:"id"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	Score     float64   `db:"score" json:"score"`
 	User
 	Game
 }
