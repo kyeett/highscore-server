@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -67,7 +68,8 @@ func (c *BasicClient) AddSimple(score float64) error {
 	}
 
 	if resp.StatusCode != http.StatusCreated {
-		return errors.New(fmt.Sprintf("expected status code %d, got %s", http.StatusCreated, resp.Status))
+		b, _ = ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("expected status code %d, got %s: %s", http.StatusCreated, resp.Status, string(b))
 	}
 
 	return nil
