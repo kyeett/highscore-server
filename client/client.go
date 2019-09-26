@@ -20,22 +20,31 @@ var _ HighscoreClient = &BasicClient{}
 type HighscoreClient interface {
 	AddSimple(score float64) error
 	ListSimple() ([]*model.Score, error)
+	GetClientID() string
+	SetClientID(string)
 }
 
-func New(url string, gameName string) (*BasicClient, error) {
+func New(url string, gameName string) (HighscoreClient, error) {
+	c, err := NewNoID(url, gameName)
+	if err != nil {
+		return nil, err
+	}
+
 	userID, err := machineid.ProtectedID(gameName)
 	if err != nil {
 		return nil, errors.New("could not create unique client ID: " + err.Error())
 	}
+	c.SetClientID(userID)
 
+	return c, nil
+}
+
+func NewNoID(url string, gameName string) (HighscoreClient, error) {
 	return &BasicClient{
 		baseURL: url,
 		client:  http.DefaultClient,
 		game: model.Game{
 			Name: gameName,
-		},
-		user: model.User{
-			ID: userID,
 		},
 	}, nil
 }
@@ -48,7 +57,9 @@ type BasicClient struct {
 }
 
 func (c *BasicClient) AddSimple(score float64) error {
-	u := c.baseURL + "/highscore/"
+	if c.user.ID == "" {
+		return errors.New("user ID not set, blocking adding new score")
+	}
 
 	m := model.Score{
 		ID:    uuid.New(),
@@ -62,6 +73,7 @@ func (c *BasicClient) AddSimple(score float64) error {
 		return err
 	}
 
+	u := c.baseURL + "/highscore/"
 	resp, err := c.client.Post(u, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return err
@@ -77,7 +89,6 @@ func (c *BasicClient) AddSimple(score float64) error {
 
 func (c *BasicClient) ListSimple() ([]*model.Score, error) {
 	url := c.baseURL + "/highscore/" + url.PathEscape(c.game.Name)
-	fmt.Println(url)
 
 	resp, err := c.client.Get(url)
 	if err != nil {
@@ -90,6 +101,14 @@ func (c *BasicClient) ListSimple() ([]*model.Score, error) {
 	}
 
 	return score, nil
+}
+
+func (c *BasicClient) GetClientID() string {
+	return c.user.ID
+}
+
+func (c *BasicClient) SetClientID(ID string) {
+	c.user.ID = ID
 }
 
 func encodedUUIDFromBytes(input []byte) (uuid.UUID, error) {
